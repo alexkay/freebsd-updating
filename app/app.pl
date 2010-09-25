@@ -49,6 +49,8 @@ sub print_feed {
 
     # Check for a new revision at most once per hour.
     unless (-e $rev and -M $rev < 1/24) {
+        `touch $rev`;
+
         my $url = 'http://www.freebsd.org/cgi/cvsweb.cgi/ports/UPDATING';
         my $data = get ($url) || die "Could not fetch $url";
 
@@ -90,7 +92,7 @@ sub get_feed {
     # Remove the description header.
     my $trim = 1;
     # Number of entries in the feed.
-    my $entries = 40;
+    my $entries = 20;
     # State variables.
     my ($date, $title, $content);
 
