@@ -23,6 +23,21 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
+# This script assumes that CVS/SVN checkouts are already set up:
+#
+# Ports:
+# % cvs -d anoncvs@anoncvs1.FreeBSD.org:/home/ncvs co ports/UPDATING
+#
+# Stable 7/8
+# % svn co --depth empty http://svn.freebsd.org/base/stable/X/ stable-X
+# % cd stable-X && svn up UPDATING
+#
+# Current:
+# % svn co --depth empty http://svn.freebsd.org/base/head head
+# % cd head && svn up UPDATING
+#
+# The script will periodically execute `svn up` or `cvs up` in each directory.
+
 use strict;
 use warnings;
 
@@ -30,7 +45,6 @@ use Digest::SHA qw (sha256_hex);
 use FCGI;
 use FindBin qw ($Bin);
 use HTML::Entities;
-use LWP::Simple;
 use POSIX;
 use XML::Atom::SimpleFeed;
 
@@ -42,42 +56,21 @@ while ($request->Accept () >= 0) {
 }
 
 sub print_feed {
-    # File to keep the last CVS revision.
-    my $rev = "$Bin/UPDATING.rev";
+    my $type = 'ports';
+    my $data = "$Bin/$type/UPDATING";
+    # Timestamp to reduce CVS/SVN updates.
+    my $stamp = "$data.stamp";
     # Generated Atom feed.
-    my $atom = "$Bin/UPDATING.atom";
+    my $atom = "$data.atom";
 
-    # Check for a new revision at most once per hour.
+    # Update and re-generate the feed at most once per hour.
     $^T = time;
-    unless (-e $rev and -M $rev < 1/24) {
-        `touch $rev`;
+    unless (-e $stamp and -M $stamp < 1/24) {
+        `touch $stamp && cd $Bin/$type && cvs up` || die "Could not update";
 
-        my $url = 'http://www.freebsd.org/cgi/cvsweb.cgi/ports/UPDATING';
-        my $data = get ($url) || die "Could not fetch $url";
-
-        # Get the new revision from HTML.
-        unless ($data =~ /Revision <b>(\d+\.\d+)<\/b>/) {
-            die "Could not parse $url";
-        }
-
-        my $newrev = $1;
-        my $currev = '';
-        if (open (REV, "< $rev")) {
-            $currev = <REV>;
-            close REV;
-        }
-
-        if ($currev ne $newrev) {
-            open REV, "> $rev";
-            print REV $newrev;
-            close REV;
-
-            # Fetch the new UPDATING file.
-            $data = get ("$url?rev=$newrev;content-type=text%2Fplain");
-            open ATOM, "> $atom";
-            print ATOM get_feed ($data);
-            close ATOM;
-        }
+        open ATOM, "> $atom";
+        print ATOM get_feed ($data);
+        close ATOM;
     }
 
     open ATOM, "< $atom" || die "Could not find the feed";
@@ -104,8 +97,9 @@ sub get_feed {
     # State variables.
     my ($date, $title, $content);
 
-    foreach my $line (split ("\n", $data)) {
-        if ($line =~ /^(\d{8}):/) {
+    open DATA, $data;
+    while (<DATA>) {
+        if (/^(\d{8}):/) {
             if (not $trim) {
                 # Add the previous entry.
                 my $updated = substr ($date, 0, 4) . '-' . substr ($date, 4, 2);
@@ -126,13 +120,14 @@ sub get_feed {
             $date = $1;
         } elsif ($trim) {
             next;
-        } elsif ($line =~ /^\s*(AFFECTS:.*)/) {
+        } elsif (/^\s*(AFFECTS:.*)/) {
             $title = encode_entities ($1);
-            $content = "$date:\n" . encode_entities ($line);
+            $content = "$date:\n" . encode_entities ($_);
         } else {
-            $content .= "\n" . encode_entities ($line);
+            $content .= "\n" . encode_entities ($_);
         }
     }
+    close DATA;
 
     return $feed->as_string;
 }

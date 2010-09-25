@@ -1,1 +1,3 @@
-app/UPDATING.*
+app/head
+app/ports
+app/stable-*
