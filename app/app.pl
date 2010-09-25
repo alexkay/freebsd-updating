@@ -36,7 +36,11 @@
 # % svn co --depth empty http://svn.freebsd.org/base/head head
 # % cd head && svn up UPDATING
 #
-# The script will periodically execute `svn up` or `cvs up` in each directory.
+# Also set up the crontab to update these repositories, e.g.:
+#
+# @hourly     cd $HOME/updating/app/ports && cvs up
+# @hourly     cd $HOME/updating/app/head && svn up
+#             etc...
 
 use strict;
 use warnings;
@@ -58,16 +62,12 @@ while ($request->Accept () >= 0) {
 sub print_feed {
     my $type = 'ports';
     my $data = "$Bin/$type/UPDATING";
-    # Timestamp to reduce CVS/SVN updates.
-    my $stamp = "$data.stamp";
-    # Generated Atom feed.
     my $atom = "$data.atom";
 
     # Update and re-generate the feed at most once per hour.
     $^T = time;
-    unless (-e $stamp and -M $stamp < 1/24) {
-        `touch $stamp && cd $Bin/$type && cvs up` || die "Could not update";
-
+    unless (-e $atom and -M $atom < 1/24) {
+        `touch $atom`;
         open ATOM, "> $atom";
         print ATOM get_feed ($data);
         close ATOM;
@@ -93,7 +93,7 @@ sub get_feed {
     # Remove the description header.
     my $trim = 1;
     # Number of entries in the feed.
-    my $entries = 20;
+    my $entries = 5;
     # State variables.
     my ($date, $title, $content);
 
@@ -108,7 +108,7 @@ sub get_feed {
                     title   => $title,
                     content => "<pre>$content</pre>",
                     updated => $updated,
-                    id      => "${site}entry/" . sha256_hex ($date, $title, $content),
+                    id      => "${site}entry/" . sha256_hex ($date, $title),
                 );
                 # Stop if we have enough entries.
                 if (!--$entries) {
@@ -120,11 +120,12 @@ sub get_feed {
             $date = $1;
         } elsif ($trim) {
             next;
-        } elsif (/^\s*(AFFECTS:.*)/) {
-            $title = encode_entities ($1);
+        } elsif (!$title) {
             $content = "$date:\n" . encode_entities ($_);
+            s/^\s+|\s+$//g;
+            $title = encode_entities ($_);
         } else {
-            $content .= "\n" . encode_entities ($_);
+            $content .= encode_entities ($_);
         }
     }
     close DATA;
