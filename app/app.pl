@@ -56,11 +56,18 @@ my $request = FCGI::Request ();
 
 while ($request->Accept () >= 0) {
     print "Content-type: application/atom+xml\r\n\r\n";
-    print_feed ();
+    $ENV{REQUEST_URI} =~ /\/atom\/?(.*)/;
+    print_feed ($1);
 }
 
 sub print_feed {
-    my $type = 'ports';
+    my $type = shift;
+    my @types = qw (head ports stable-7 stable-8);
+    # Whitelisting is always a good idea, plus first ports/UPDATING
+    # users are still subscribed to /atom.
+    unless (grep { $_ eq $type } @types) {
+        $type = 'ports';
+    }
     my $data = "$Bin/$type/UPDATING";
     my $atom = "$data.atom";
 
@@ -69,7 +76,7 @@ sub print_feed {
     unless (-e $atom and -M $atom < 1/24) {
         `touch $atom`;
         open ATOM, "> $atom";
-        print ATOM get_feed ($data);
+        print ATOM get_feed ($type, $data);
         close ATOM;
     }
 
@@ -79,12 +86,12 @@ sub print_feed {
 }
 
 sub get_feed {
-    my $data = shift;
+    my ($type, $data) = @_;
     my $site = 'http://updating.versia.com/';
     my $feed = XML::Atom::SimpleFeed->new (
-        title   => 'FreeBSD ports/UPDATING',
+        title   => "FreeBSD $type/UPDATING",
         link    => $site,
-        link    => { rel => 'self', href => "${site}atom" },
+        link    => { rel => 'self', href => "${site}atom/$type" },
         updated => strftime ('%Y-%m-%dT%H:%M:%SZ', gmtime),
         author  => 'Alexander Kojevnikov',
         id      => $site,
@@ -93,7 +100,7 @@ sub get_feed {
     # Remove the description header.
     my $trim = 1;
     # Number of entries in the feed.
-    my $entries = 5;
+    my $entries = 10;
     # State variables.
     my ($date, $title, $content);
 

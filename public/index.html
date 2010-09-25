@@ -3,10 +3,13 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <title>FreeBSD ports/UPDATING web feed</title>
+    <title>FreeBSD UPDATING web feeds</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta http-equiv="Content-Style-Type" content="text/css"/>
-    <link rel="alternate" type="application/atom+xml" title="FreeBSD ports/UPDATING" href="http://updating.versia.com/atom" />
+    <link rel="alternate" type="application/atom+xml" title="FreeBSD ports/UPDATING" href="http://updating.versia.com/atom/ports" />
+    <link rel="alternate" type="application/atom+xml" title="FreeBSD head/UPDATING" href="http://updating.versia.com/atom/head" />
+    <link rel="alternate" type="application/atom+xml" title="FreeBSD stable-7/UPDATING" href="http://updating.versia.com/atom/stable-7" />
+    <link rel="alternate" type="application/atom+xml" title="FreeBSD stable-8/UPDATING" href="http://updating.versia.com/atom/stable-8" />
     <style type="text/css">
       body {font-family: sans-serif; font-size: 11pt; width: 760px; margin: 20px auto; padding: 0;}
       h1, h2 {font-weight: bold;}
@@ -29,14 +32,17 @@
 </script>
   </head>
   <body>
-    <h1>FreeBSD ports/UPDATING web feed</h1>
-    <p>Tired of typing <code>`less /usr/ports/UPDATING`</code> on each update? Then this feed is for you! It does just that &mdash; converts ports/UPDATING into a web feed which can be added into a news aggregator / rss reader of your choice.</p>
+    <h1>FreeBSD UPDATING web feeds</h1>
+    <p>Tired of typing <code>`less /usr/{ports,src}/UPDATING`</code> on each port or system update? Then these feeds are for you! They do just that &mdash; convert UPDATING files into web feeds which can be added into a news aggregator / rss reader of your choice.</p>
     <h2>Subscribe</h2>
-    <p><a href="/atom"><img src="/feed-icon-14x14.png"/> Atom 1.0</a></p>
+    <p><a href="/atom/ports"><img src="/feed-icon-14x14.png"/> ports/UPDATING</a></p>
+    <p><a href="/atom/head"><img src="/feed-icon-14x14.png"/> head/UPDATING</a></p>
+    <p><a href="/atom/stable-7"><img src="/feed-icon-14x14.png"/> stable-7/UPDATING</a></p>
+    <p><a href="/atom/stable-8"><img src="/feed-icon-14x14.png"/> stable-8/UPDATING</a></p>
     <h2>Source code</h2>
-    <p>The script that generates the feed is available under <a href="http://www.freebsd.org/copyright/freebsd-license.html">FreeBSD license</a>, the code is hosted on <a href="http://github.com/alexkay/freebsd-updating">GitHub</a>.</p>
+    <p>The script that generates the feeds is available under <a href="http://www.freebsd.org/copyright/freebsd-license.html">FreeBSD license</a>, the code is hosted on <a href="http://github.com/alexkay/freebsd-updating">GitHub</a>.</p>
     <h2>Feedback</h2>
-    <p>This feed is maintained by <a href="http://versia.com">Alexander Kojevnikov</a>, you can contact him by <a href="mailto:&#97;l&#101;&#120;&#97;&#110;&#100;&#101;&#114;&#64;&#107;&#111;&#106;&#101;v&#110;i&#107;&#111;v.&#99;&#111;&#109;">email</a>.</p>
+    <p>These feeds are maintained by <a href="http://versia.com">Alexander Kojevnikov</a>, you can contact him by <a href="mailto:&#97;l&#101;&#120;&#97;&#110;&#100;&#101;&#114;&#64;&#107;&#111;&#106;&#101;v&#110;i&#107;&#111;v.&#99;&#111;&#109;">email</a>.</p>
   </body>
 </html>
 
