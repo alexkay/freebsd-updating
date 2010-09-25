@@ -48,6 +48,7 @@ sub print_feed {
     my $atom = "$Bin/UPDATING.atom";
 
     # Check for a new revision at most once per hour.
+    $^T = time;
     unless (-e $rev and -M $rev < 1/24) {
         `touch $rev`;
 
@@ -60,21 +61,28 @@ sub print_feed {
         }
 
         my $newrev = $1;
-        my $currev = open (REV, "< $rev") ? <REV> : '';
+        my $currev = '';
+        if (open (REV, "< $rev")) {
+            $currev = <REV>;
+            close REV;
+        }
 
         if ($currev ne $newrev) {
             open REV, "> $rev";
             print REV $newrev;
+            close REV;
 
             # Fetch the new UPDATING file.
             $data = get ("$url?rev=$newrev;content-type=text%2Fplain");
             open ATOM, "> $atom";
             print ATOM get_feed ($data);
+            close ATOM;
         }
     }
 
     open ATOM, "< $atom" || die "Could not find the feed";
     print <ATOM>;
+    close ATOM;
 }
 
 sub get_feed {
