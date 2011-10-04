@@ -28,7 +28,7 @@
 # Ports:
 # % cvs -d anoncvs@anoncvs1.FreeBSD.org:/home/ncvs co ports/UPDATING
 #
-# Stable 7/8
+# Stable 7/8/9
 # % svn co --depth empty http://svn.freebsd.org/base/stable/X/ stable-X
 # % cd stable-X && svn up UPDATING
 #
@@ -62,7 +62,7 @@ while ($request->Accept () >= 0) {
 
 sub print_feed {
     my $type = shift;
-    my @types = qw (head ports stable-7 stable-8);
+    my @types = qw (head ports stable-7 stable-8 stable-9);
     # Whitelisting is always a good idea, plus first ports/UPDATING
     # users are still subscribed to /atom.
     unless (grep { $_ eq $type } @types) {
