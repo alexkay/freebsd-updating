@@ -52,13 +52,18 @@ use HTML::Entities;
 use POSIX;
 use XML::Atom::SimpleFeed;
 
-my $request = FCGI::Request ();
+my $sock = "$Bin/app.sock";
+my $socket = FCGI::OpenSocket ($sock, 1024);
+chmod(0666, $sock);
+my $request = FCGI::Request (\*STDIN, \*STDOUT, \*STDERR, \%ENV, $socket);
 
 while ($request->Accept () >= 0) {
     print "Content-type: application/atom+xml\r\n\r\n";
     $ENV{REQUEST_URI} =~ /\/atom\/?(.*)/;
     print_feed ($1);
 }
+
+FCGI::CloseSocket ($socket);
 
 sub print_feed {
     my $type = shift;
