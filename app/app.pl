@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (c) 2010 Alexander Kojevnikov. All rights reserved.
+# Copyright (c) 2010-2013 Alexander Kojevnikov. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -23,10 +23,11 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-# This script assumes that CVS/SVN checkouts are already set up:
+# This script assumes that SVN checkouts are already set up:
 #
 # Ports:
-# % cvs -d anoncvs@anoncvs1.FreeBSD.org:/home/ncvs co ports/UPDATING
+# % svn co --depth empty http://svn.freebsd.org/ports/head/ ports
+# % cd ports && svn up UPDATING
 #
 # Stable 7/8/9
 # % svn co --depth empty http://svn.freebsd.org/base/stable/X/ stable-X
@@ -38,7 +39,7 @@
 #
 # Also set up the crontab to update these repositories, e.g.:
 #
-# @hourly     cd $HOME/updating/app/ports && cvs up
+# @hourly     cd $HOME/updating/app/ports && svn up
 # @hourly     cd $HOME/updating/app/head && svn up
 #             etc...
 
