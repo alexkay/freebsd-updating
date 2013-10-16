@@ -1,0 +1,3 @@
+[submodule "src/ext/feeds"]
+	path = src/ext/feeds
+	url = https://github.com/gorilla/feeds.git
