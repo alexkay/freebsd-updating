@@ -1,8 +1,7 @@
 export GOPATH = $(shell pwd)
-files = src/cron.go
 
 all: fmt
-	 go build $(files)
+	 go build cron
 
 fmt:
-	go fmt $(files)
+	go fmt cron

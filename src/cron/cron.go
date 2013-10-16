@@ -106,6 +106,7 @@ func convert(name string, text string) (atom string, err error) {
 					Description: fmt.Sprintf("<pre>%s</pre>", content),
 					Updated:     updated,
 					Id:          fmt.Sprintf("%sentry/%x", site, hash.Sum(nil)),
+					Link:        &feeds.Link{},
 				})
 
 				// Stop if we have enough entries.
@@ -117,13 +118,12 @@ func convert(name string, text string) (atom string, err error) {
 				content = ""
 			}
 			trim_header = false
-			date = matches[0]
+			date = matches[1]
 		} else if trim_header {
 			continue
 		} else if len(title) == 0 {
 			content = fmt.Sprintf("%s:\n%s\n", date, html.EscapeString(line))
-			// s/^\s+|\s+$//g;
-			title = html.EscapeString(line)
+			title = html.EscapeString(strings.TrimSpace(line))
 		} else {
 			content += html.EscapeString(line) + "\n"
 		}
