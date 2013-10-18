@@ -1,5 +1,2 @@
-app/head
-app/ports
-app/stable-*
 cron
 public/*.atom
