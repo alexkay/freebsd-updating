@@ -31,6 +31,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"path"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
@@ -38,28 +41,39 @@ import (
 	"ext/feeds"
 )
 
-type Feed struct {
-	name string
-	url  string
-}
-
 func main() {
-	feeds := []Feed{
-		{
-			name: "ports",
-			url:  "https://raw.github.com/freebsd/freebsd-ports/master/UPDATING",
-		},
+	feedTypes := map[string]string{
+		"head":     "https://raw.github.com/freebsd/freebsd/master/UPDATING",
+		"ports":    "https://raw.github.com/freebsd/freebsd-ports/master/UPDATING",
+		"stable-7": "https://raw.github.com/freebsd/freebsd/stable/7/UPDATING",
+		"stable-8": "https://raw.github.com/freebsd/freebsd/stable/8/UPDATING",
+		"stable-9": "https://raw.github.com/freebsd/freebsd/stable/9/UPDATING",
 	}
 
-	for _, feed := range feeds {
-		feed.generate()
+	for name, url := range feedTypes {
+		generate(name, url)
 	}
 }
 
-func (feed *Feed) generate() {
-	text := download(feed.url)
-	atom, _ := convert(feed.name, text)
-	fmt.Printf("%s", atom)
+func generate(name string, url string) {
+	text := download(url)
+	atom := convert(name, text)
+
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	file, err := os.Create(path.Join(dir, "public", name+".atom"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(atom)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func download(url string) (text string) {
@@ -77,7 +91,7 @@ func download(url string) (text string) {
 	return string(bytes)
 }
 
-func convert(name string, text string) (atom string, err error) {
+func convert(name string, text string) (atom string) {
 	site := "http://updating.versia.com/"
 	now := time.Now()
 	feed := &feeds.Feed{
@@ -129,6 +143,9 @@ func convert(name string, text string) (atom string, err error) {
 		}
 	}
 
-	atom, err = feed.ToAtom()
-	return
+	atom, err := feed.ToAtom()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return atom
 }
