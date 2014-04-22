@@ -43,11 +43,11 @@ import (
 
 func main() {
 	feedTypes := map[string]string{
-		"head":     "https://raw.github.com/freebsd/freebsd/master/UPDATING",
-		"ports":    "https://raw.github.com/freebsd/freebsd-ports/master/UPDATING",
-		"stable-7": "https://raw.github.com/freebsd/freebsd/stable/7/UPDATING",
-		"stable-8": "https://raw.github.com/freebsd/freebsd/stable/8/UPDATING",
-		"stable-9": "https://raw.github.com/freebsd/freebsd/stable/9/UPDATING",
+		"head":      "https://raw.github.com/freebsd/freebsd/master/UPDATING",
+		"ports":     "https://raw.github.com/freebsd/freebsd-ports/master/UPDATING",
+		"stable-8":  "https://raw.github.com/freebsd/freebsd/stable/8/UPDATING",
+		"stable-9":  "https://raw.github.com/freebsd/freebsd/stable/9/UPDATING",
+		"stable-10": "https://raw.github.com/freebsd/freebsd/stable/10/UPDATING",
 	}
 
 	for name, url := range feedTypes {
