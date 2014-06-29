@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2013 Alexander Kojevnikov. All rights reserved.
+// Copyright (c) 2010-2014 Alexander Kojevnikov. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -38,7 +38,7 @@ import (
 	"strings"
 	"time"
 
-	"ext/feeds"
+	"github.com/gorilla/feeds"
 )
 
 func main() {
