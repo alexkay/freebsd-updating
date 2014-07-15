@@ -95,12 +95,12 @@ func download(url string) (text string) {
 func convert(name string, text string) (atom string) {
 	site := "http://updating.versia.com/"
 	now := time.Now()
-	title := fmt.Sprintf("FreeBSD %s/UPDATING", name)
+	feedTitle := fmt.Sprintf("FreeBSD %s/UPDATING", name)
 	if name == "changes" {
-		title = "FreeBSD ports/CHANGES"
+		feedTitle = "FreeBSD ports/CHANGES"
 	}
 	feed := &feeds.Feed{
-		Title:   title,
+		Title:   feedTitle,
 		Link:    &feeds.Link{Href: site},
 		Author:  &feeds.Author{"Alexander Kojevnikov", "alexander@kojevnikov.com"},
 		Updated: now,
@@ -110,7 +110,7 @@ func convert(name string, text string) (atom string) {
 	trim_header := true
 	num_entries := 10
 	date_regexp, _ := regexp.Compile("^(\\d{8}):")
-	var date, content string
+	var date, title, content string
 
 	for _, line := range strings.Split(text, "\n") {
 		if matches := date_regexp.FindStringSubmatch(line); matches != nil {
