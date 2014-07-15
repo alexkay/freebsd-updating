@@ -43,8 +43,9 @@ import (
 
 func main() {
 	feedTypes := map[string]string{
-		"head":      "https://raw.github.com/freebsd/freebsd/master/UPDATING",
 		"ports":     "https://raw.github.com/freebsd/freebsd-ports/master/UPDATING",
+		"changes":   "https://raw.github.com/freebsd/freebsd-ports/master/CHANGES",
+		"head":      "https://raw.github.com/freebsd/freebsd/master/UPDATING",
 		"stable-8":  "https://raw.github.com/freebsd/freebsd/stable/8/UPDATING",
 		"stable-9":  "https://raw.github.com/freebsd/freebsd/stable/9/UPDATING",
 		"stable-10": "https://raw.github.com/freebsd/freebsd/stable/10/UPDATING",
@@ -94,8 +95,12 @@ func download(url string) (text string) {
 func convert(name string, text string) (atom string) {
 	site := "http://updating.versia.com/"
 	now := time.Now()
+	title := fmt.Sprintf("FreeBSD %s/UPDATING", name)
+	if name == "changes" {
+		title = "FreeBSD ports/CHANGES"
+	}
 	feed := &feeds.Feed{
-		Title:   fmt.Sprintf("FreeBSD %s/UPDATING", name),
+		Title:   title,
 		Link:    &feeds.Link{Href: site},
 		Author:  &feeds.Author{"Alexander Kojevnikov", "alexander@kojevnikov.com"},
 		Updated: now,
@@ -105,7 +110,7 @@ func convert(name string, text string) (atom string) {
 	trim_header := true
 	num_entries := 10
 	date_regexp, _ := regexp.Compile("^(\\d{8}):")
-	var date, title, content string
+	var date, content string
 
 	for _, line := range strings.Split(text, "\n") {
 		if matches := date_regexp.FindStringSubmatch(line); matches != nil {
