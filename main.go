@@ -46,9 +46,8 @@ func main() {
 		"ports":     "https://raw.github.com/freebsd/freebsd-ports/master/UPDATING",
 		"changes":   "https://raw.github.com/freebsd/freebsd-ports/master/CHANGES",
 		"head":      "https://raw.github.com/freebsd/freebsd/master/UPDATING",
-		"stable-8":  "https://raw.github.com/freebsd/freebsd/stable/8/UPDATING",
-		"stable-9":  "https://raw.github.com/freebsd/freebsd/stable/9/UPDATING",
 		"stable-10": "https://raw.github.com/freebsd/freebsd/stable/10/UPDATING",
+		"stable-11": "https://raw.github.com/freebsd/freebsd/stable/11/UPDATING",
 	}
 
 	for name, url := range feedTypes {
