@@ -93,7 +93,7 @@ func download(url string) (text string) {
 }
 
 func convert(name string, text string) (atom string) {
-	site := "http://updating.kojevnikov.com/"
+	const site = "http://updating.kojevnikov.com/"
 	now := time.Now()
 	feedTitle := fmt.Sprintf("FreeBSD %s/UPDATING", name)
 	if name == "changes" {
@@ -106,6 +106,17 @@ func convert(name string, text string) (atom string) {
 		Updated: now,
 		Id:      site,
 	}
+
+	// TODO: Remove after 2018-02-15.
+	updated, _ := time.Parse("2006-01-02", "2018-02-01")
+	url := site + "atom/" + name
+	feed.Add(&feeds.Item{
+		Title:       "This web feed has been moved, please update the URL",
+		Description: fmt.Sprintf(`<a href="%s">%s</a>`, url, url),
+		Updated:     updated,
+		Id:          fmt.Sprintf("%sentry/versia", site),
+		Link:        &feeds.Link{},
+	})
 
 	trim_header := true
 	num_entries := 10
