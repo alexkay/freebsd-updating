@@ -93,7 +93,7 @@ func download(url string) (text string) {
 }
 
 func convert(name string, text string) (atom string) {
-	site := "http://updating.versia.com/"
+	site := "http://updating.kojevnikov.com/"
 	now := time.Now()
 	feedTitle := fmt.Sprintf("FreeBSD %s/UPDATING", name)
 	if name == "changes" {
