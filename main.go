@@ -106,17 +106,6 @@ func convert(name string, text string) (atom string) {
 		Id:      site,
 	}
 
-	// TODO: Remove after 2018-02-15.
-	updated, _ := time.Parse("2006-01-02", "2018-02-01")
-	url := site + "atom/" + name
-	feed.Add(&feeds.Item{
-		Title:       "This web feed has been moved, please update the URL",
-		Description: fmt.Sprintf(`<a href="%s">%s</a>`, url, url),
-		Updated:     updated,
-		Id:          fmt.Sprintf("%sentry/versia", site),
-		Link:        &feeds.Link{},
-	})
-
 	trim_header := true
 	num_entries := 10
 	date_regexp, _ := regexp.Compile("^(\\d{8}):")
